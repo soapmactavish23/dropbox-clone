@@ -17,7 +17,7 @@ class DropBoxController {
 
         });
 
-        this.inputFilesEl.addEventListener('change', event => {
+        this.inputFilesEl.addEventListener('change', event => { 
 
             console.log(event.target.files);
 
