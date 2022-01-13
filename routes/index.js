@@ -18,6 +18,19 @@ router.post("/upload", (req, res) => {
     }
     res.json({ files });
   });
+
+  // form.parse(req, function (err, fields, files) {
+  //   console.log(fields.gradeNumber);
+  //   const oldpath = files.filetoupload.path;
+  //   const newpath = 'D:/www/dropbox-clone/upload' + files.filetoupload.name;
+
+  //   fs.rename(oldpath, newpath, function (err) {
+  //     if (err) throw err;
+  //     res.write('File uploaded and moved!');
+  //     res.end();
+  //   });
+
+  // });
 });
 
 module.exports = router;
