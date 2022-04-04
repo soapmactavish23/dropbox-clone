@@ -242,7 +242,23 @@
             </div>
         </div>
     </div>
-
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-analytics.js";
+        const firebaseConfig = {
+          apiKey: "AIzaSyD4hdhyZnvNPaVz3jQwPDRD6W1EHVbS2xI",
+          authDomain: "dropbox-clone-c3a62.firebaseapp.com",
+          databaseURL: "https://dropbox-clone-c3a62-default-rtdb.firebaseio.com",
+          projectId: "dropbox-clone-c3a62",
+          storageBucket: "dropbox-clone-c3a62.appspot.com",
+          messagingSenderId: "548179123542",
+          appId: "1:548179123542:web:af1e4b91105e411dc60af7",
+          measurementId: "G-3T03KCQK3Z"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+      </script>
     <script type="text/javascript" src="/src/controller/DropBoxController.js"></script>
     <script type="text/javascript" src="/src/index.js"></script>
 
