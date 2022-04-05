@@ -15,17 +15,19 @@ class DropBoxController {
     }
 
     connectFirebase() {
-        // const firebaseConfig = {
-        //     apiKey: "AIzaSyD4hdhyZnvNPaVz3jQwPDRD6W1EHVbS2xI",
-        //     authDomain: "dropbox-clone-c3a62.firebaseapp.com",
-        //     databaseURL: "https://dropbox-clone-c3a62-default-rtdb.firebaseio.com",
-        //     projectId: "dropbox-clone-c3a62",
-        //     storageBucket: "dropbox-clone-c3a62.appspot.com",
-        //     messagingSenderId: "548179123542",
-        //     appId: "1:548179123542:web:af1e4b91105e411dc60af7",
-        //     measurementId: "G-3T03KCQK3Z"
-        // };
-        // initializeApp(firebaseConfig);
+        const firebaseConfig = {
+            apiKey: "AIzaSyD4hdhyZnvNPaVz3jQwPDRD6W1EHVbS2xI",
+            authDomain: "dropbox-clone-c3a62.firebaseapp.com",
+            databaseURL: "https://dropbox-clone-c3a62-default-rtdb.firebaseio.com",
+            projectId: "dropbox-clone-c3a62",
+            storageBucket: "dropbox-clone-c3a62.appspot.com",
+            messagingSenderId: "548179123542",
+            appId: "1:548179123542:web:af1e4b91105e411dc60af7",
+            measurementId: "G-3T03KCQK3Z"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
     }
 
     initEvents() {
@@ -37,15 +39,31 @@ class DropBoxController {
         });
 
         this.inputFilesEl.addEventListener('change', event => {
-
-            this.uploadTask(event.target.files);
+            this.btnSendFileEl.disabled = true;
+            this.uploadTask(event.target.files).then((responses) => {
+                responses.forEach(resp => {
+                    this.getFirebaseRef().push().set(resp.files['input-file']);
+                });
+                this.uploadComplete();
+            }).catch(err => {
+                this.uploadComplete();
+                console.error(err);
+            });
 
             this.modalShow();
 
-            this.inputFilesEl.value = '';
-
         });
 
+    }
+
+    uploadComplete() {
+        this.modalShow(false);
+        this.inputFilesEl.value = '';
+        this.btnSendFileEl.disabled = false;
+    }
+
+    getFirebaseRef() {
+        return firebase.database().ref('/files');
     }
 
     modalShow(show = true) {
@@ -53,7 +71,6 @@ class DropBoxController {
     }
 
     uploadTask(files) {
-
         let promises = [];
 
         [...files].forEach(file => {
@@ -65,9 +82,9 @@ class DropBoxController {
                 ajax.open('POST', '/upload');
 
                 ajax.onload = event => {
-                    this.modalShow(false);
+                    // this.modalShow(false);
                     try {
-                        console.log(ajax.responseText)
+                        
                         resolve(JSON.parse(ajax.responseText));
                     } catch (e) {
                         reject(e);
@@ -77,7 +94,7 @@ class DropBoxController {
 
                 ajax.onerror = event => {
 
-                    this.modalShow(false);
+                    // this.modalShow(false);
                     reject(event);
 
                 }
@@ -99,8 +116,8 @@ class DropBoxController {
             }));
 
         });
-
-        return Promise.all(files);
+        
+        return Promise.all(promises);
 
     }
 
