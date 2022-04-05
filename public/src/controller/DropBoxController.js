@@ -8,9 +8,11 @@ class DropBoxController {
         this.progressBarEl = this.snackModelEl.querySelector('.mc-progress-bar-fg');
         this.filenameEl = this.snackModelEl.querySelector('.filename');
         this.timeleftEl = this.snackModelEl.querySelector('.timeleft');
+        this.listFilesEl = document.querySelector('#list-of-files-and-directories');
 
         this.connectFirebase();
         this.initEvents();
+        this.readFiles();
 
     }
 
@@ -41,7 +43,7 @@ class DropBoxController {
         this.inputFilesEl.addEventListener('change', event => {
             this.btnSendFileEl.disabled = true;
             this.uploadTask(event.target.files).then((responses) => {
-                responses.forEach(resp => {
+                responses.forEach(resp => {                    
                     this.getFirebaseRef().push().set(resp.files['input-file']);
                 });
                 this.uploadComplete();
@@ -84,7 +86,7 @@ class DropBoxController {
                 ajax.onload = event => {
                     // this.modalShow(false);
                     try {
-                        
+
                         resolve(JSON.parse(ajax.responseText));
                     } catch (e) {
                         reject(e);
@@ -116,7 +118,7 @@ class DropBoxController {
             }));
 
         });
-        
+
         return Promise.all(promises);
 
     }
@@ -160,7 +162,7 @@ class DropBoxController {
     }
 
     getFileIconView(file) {
-        switch (file.type) {
+        switch (file.mimetype) {
             case 'folder':
                 return `<svg width="160" height="160" viewBox="0 0 160 160" class="mc-icon-template-content tile__preview tile__preview--icon">
                     <title>content-folder-large</title>
@@ -305,12 +307,28 @@ class DropBoxController {
         }
     }
 
-    getFileView(file) {
+    getFileView(file, key) {
+        let li = document.createElement('li');
+        li.dataset.key = key;
+        li.innerHTML = `${this.getFileIconView(file)}
+        <div class="name text-center">${file.originalFilename}</div>`;
+        return li;
+    }
 
-        return `<li>
-            ${this.getFileIconView(file)}
-            <div class="name text-center">Meus Documentos</div>
-        </li>`;
+    readFiles() {
+
+        this.getFirebaseRef().on('value', snapshot => {
+
+            this.listFilesEl.innerHTML = '';
+
+            snapshot.forEach(snapshotItem => {
+                let key = snapshotItem.key;
+                let data = snapshotItem.val();
+                console.log(key, data);
+
+                this.listFilesEl.appendChild(this.getFileView(data, key));
+            });
+        });
 
     }
 
