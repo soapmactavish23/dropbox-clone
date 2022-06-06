@@ -43,7 +43,7 @@ class DropBoxController {
         this.inputFilesEl.addEventListener('change', event => {
             this.btnSendFileEl.disabled = true;
             this.uploadTask(event.target.files).then((responses) => {
-                responses.forEach(resp => {                    
+                responses.forEach(resp => {
                     this.getFirebaseRef().push().set(resp.files['input-file']);
                 });
                 this.uploadComplete();
@@ -327,7 +327,6 @@ class DropBoxController {
             snapshot.forEach(snapshotItem => {
                 let key = snapshotItem.key;
                 let data = snapshotItem.val();
-                console.log(key, data);
 
                 this.listFilesEl.appendChild(this.getFileView(data, key));
             });
@@ -338,8 +337,50 @@ class DropBoxController {
     initEventsLi(li) {
         li.addEventListener('click', e => {
 
+            if (e.shiftKey) {
+
+                let firstLi = this.listFilesEl.querySelector('.selected');
+
+                if (firstLi) {
+
+                    let indexStart;
+                    let indexEnd;
+                    let lis = li.parentElement.childNodes;
+
+                    lis.forEach((el, index) => {
+
+                        if (firstLi === el) {
+                            indexStart = index;
+                        }
+
+                        if (li === el) {
+                            indexEnd = index;
+                        }
+
+                    });
+
+                    let index = [indexStart, indexEnd].sort();
+
+                    lis.forEach((el, i) => {
+                        if(i >= index[0] && i <= index[1]) {
+                            el.classList.add('selected');
+                        }
+                    });
+
+                    return true;
+
+                }
+
+            }
+
+            if (!e.ctrlKey) {
+                this.listFilesEl.querySelectorAll('li.selected').forEach(el => {
+                    el.classList.remove('selected');
+                });
+            }
+
             li.classList.toggle('selected');
-            
+
         });
     }
 
