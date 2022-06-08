@@ -7,8 +7,21 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post("/upload", (req, res) => {
+router.delete('/file', (req, res) => {
+  const form = new formidable.IncomingForm({
+    uploadDir: './upload',
+    keepExtensions: true
+  });
 
+  form.parse(req, (err, fields, files) => {
+
+    
+    
+    res.json({ fields });
+  });
+});
+
+router.post("/upload", (req, res) => {
   const form = new formidable.IncomingForm({
     uploadDir: './upload',
     keepExtensions: true
@@ -19,10 +32,8 @@ router.post("/upload", (req, res) => {
       next(err);
       return;
     }
-    res.json({files});
+    res.json({ files });
   });
-
-
 });
 
 module.exports = router;
