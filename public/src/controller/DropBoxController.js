@@ -143,6 +143,7 @@ class DropBoxController {
         this.inputFilesEl.addEventListener('change', event => {
             this.btnSendFileEl.disabled = true;
             this.uploadTask(event.target.files).then((responses) => {
+                console.log(responses);
                 responses.forEach(resp => {
                     this.getFirebaseRef().push().set(resp.files['input-file']);
                 });
@@ -515,7 +516,8 @@ class DropBoxController {
                     this.openFolder();
                     break;
                 default:
-                    window.open('/file?path=' + file.path)
+                    window.open('/file?path=' + file.filepath)
+                    // window.open(file.filepath)
             }
 
         })
