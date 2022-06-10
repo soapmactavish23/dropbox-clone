@@ -51,15 +51,24 @@ class DropBoxController {
             let file = JSON.parse(li.dataset.file);
             let key = li.dataset.key;
 
-
             let formData = new FormData();
             formData.append('path', file.path);
             formData.append('key', key);
 
-            promises.push(this.ajax('/file', 'DELETE', formData, () => {
-                this.uploadProgress(event, file);
-            }, () => {
-                this.startUploadTime = Date.now();
+            promises.push(new Promise((resolve, reject) => {
+
+                let fileRef = firebase.storage().ref(this.currentFolder.join('/')).child(file.originalFilename);
+
+                fileRef.delete().then(() => {
+                    resolve({
+                        fields: {
+                            key: key
+                        }
+                    });
+                }).catch(err => {
+                    reject(err);
+                });
+
             }));
         })
 
@@ -116,7 +125,6 @@ class DropBoxController {
         });
 
         this.listFilesEl.addEventListener('selectionchange', e => {
-            console.log(this.getSelection().length);
             switch (this.getSelection().length) {
                 case 0:
                     this.btnDelete.style.display = 'none';
