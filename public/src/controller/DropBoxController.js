@@ -45,19 +45,19 @@ class DropBoxController {
     }
 
     removeFolderTask(ref, name) {
-        
+
         return new Promise((resolve, reject) => {
             let folderRef = this.getFirebaseRef(ref + '/' + name);
-            
+
             folderRef.on('value', snapshot => {
 
                 folderRef.off('value');
-                
+
                 console.log(snapshot.key);
                 snapshot.forEach(item => {
                     let data = item.val();
-                    data.key = item.key;                
-                    
+                    data.key = item.key;
+
                     if (data.mimetype === 'folder') {
                         this.removeFolderTask(ref + '/' + name, data.originalFilename).then(() => {
                             resolve({
@@ -84,7 +84,7 @@ class DropBoxController {
 
                 });
                 folderRef.remove();
-                
+
             });
 
 
@@ -623,8 +623,8 @@ class DropBoxController {
                     this.openFolder();
                     break;
                 default:
-                    window.open('/file?path=' + file.filepath)
-                // window.open(file.filepath)
+                    // window.open('/file?path=' + file.filepath)
+                    window.open(file.path)
             }
 
         })
